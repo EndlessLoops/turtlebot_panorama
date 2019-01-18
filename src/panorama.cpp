@@ -115,15 +115,23 @@ void PanoApp::spin()
         cv::Mat pano;
         cv::Stitcher stitcher = cv::Stitcher::createDefault(false);
         cv::Stitcher::Status status = stitcher.stitch(images_, pano);
+       // log("Finished Stiching");
+        if (status != cv::Stitcher::OK) //判断拼接是否成功 
+        {
+        log("Failed Stiching");    	
+        }  
+        else
+	{
         log("Finished Stiching");
-
+	  
         cv_bridge::CvImage cv_img;
         cv_img.image = pano;
         cv_img.encoding = "bgr8";
         cv_img.header.stamp = ros::Time::now();
         pub_stitched.publish(cv_img.toImageMsg());
         log("Publishing Completed Panorama");
-        // imwrite("pano.jpg", pano);
+        imwrite("/home/ubuntu/Desktop/pano.jpg", pano);
+	}
         is_active = false;
       }
       else
